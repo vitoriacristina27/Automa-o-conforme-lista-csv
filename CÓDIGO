@@ -1,0 +1,75 @@
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+
+# Configuração das opções do Chrome (opcional)
+chrome_options = webdriver.ChromeOptions()
+
+# Criação de uma instância do driver do Chrome
+driver = webdriver.Chrome(options=chrome_options)
+
+# URL da página de login - Substitua pela URL correta
+login_url = 'URL_DA_PAGINA_DE_LOGIN'
+
+# Abre a página de login no navegador
+driver.get(login_url)
+
+# Localização dos campos de login, senha e botão de login
+login_input = driver.find_element(By.ID, 'ID_DO_CAMPO_DE_LOGIN')
+password_input = driver.find_element(By.ID, 'ID_DO_CAMPO_DE_SENHA')
+login_button = driver.find_element(By.ID, 'ID_DO_BOTAO_DE_LOGIN')
+
+# Preenchimento dos campos de login e senha - Substitua pelos seus próprios dados
+login_input.send_keys('SEU_USUARIO')
+password_input.send_keys('SUA_SENHA')
+
+# Clique no botão de login
+login_button.click()
+
+# Verificação e aceitação de alertas, se existirem
+while True:
+    try:
+        alert = driver.switch_to.alert
+        alert.accept()
+    except:
+        break
+
+time.sleep(5)  # Aguarda o carregamento da página
+
+# Localização das categorias para interagir - Substitua pelos seus próprios elementos
+categoria1 = driver.find_element(By.XPATH, 'XPATH_DA_CATEGORIA1')
+categoria2 = driver.find_element(By.XPATH, 'XPATH_DA_CATEGORIA2')
+
+# Movimentação do cursor para cada categoria usando a classe ActionChains
+actions = ActionChains(driver)
+actions.move_to_element(categoria1).perform()
+actions.move_to_element(categoria2).perform()
+
+# Aguarda até que o link do relatório seja clicável e o clica
+wait = WebDriverWait(driver, 3)
+relatorio_link = wait.until(EC.element_to_be_clickable((By.XPATH, 'XPATH_DO_LINK_DE_RELATORIO')))
+relatorio_link.click()
+
+time.sleep(5)  # Aguarda o carregamento da página
+
+# Carrega um arquivo TXT para um DataFrame do Pandas - Substitua pelo seu caminho e nome do arquivo
+data = pd.read_csv(r"CAMINHO_DO_ARQUIVO.txt", skiprows=1, names=['COLUNA'])
+
+# Localização do elemento uma vez fora do loop
+element = WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.XPATH, 'XPATH_DO_ELEMENTO')))
+
+try:
+    for _, row in data.iterrows():
+        primeiro_cnpj = row['COLUNA']
+
+        #Estrutura da pagina para realizar a operação manual
+
+
+except (NoSuchElementException, TimeoutException) as e:
+    print(f"Ocorreu um erro ao localizar o elemento: {e}")
